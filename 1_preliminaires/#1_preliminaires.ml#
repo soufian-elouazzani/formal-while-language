@@ -1,0 +1,28 @@
+(* Exercice 1.1.1 et 1.1.2 *)
+(**
+Programme   = Séquence
+
+Séquence    = Instruction SuiteSéquence
+SuiteSéquence = ";" Séquence | ε
+
+Instruction = 
+    | ";"                    (* skip - ne rien faire *)
+    | Affectation
+    | Si
+    | TantQue
+
+Affectation = Variable ":=" Expression
+
+Expression = "0" | "1" | Variable
+
+Variable   = "a" | "b" | "c" | "d"
+
+Si        = "i" "(" Variable ")" "{" Séquence "}" "{" Séquence "}"
+
+TantQue   = "w" "(" Variable ")" "{" Séquence "}"
+
+*)
+
+(* Exercice 1.1.3 *)
+
+
