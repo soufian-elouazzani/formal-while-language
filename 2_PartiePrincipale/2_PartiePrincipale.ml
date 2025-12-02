@@ -169,7 +169,7 @@ let () =
 (* 2 — sequence of affectations *)
 let () =
   test "a:=1;b:=0"
-    (Seq (Affectation(A,One), Affectation(B,Zero)))
+    (Sequence (Affectation(A,One), Affectation(B,Zero)))
 
 (* 3 — simple IF *)
 let () =
