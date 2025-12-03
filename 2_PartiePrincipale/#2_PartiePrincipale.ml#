@@ -1,6 +1,6 @@
 #use "anacomb.ml";;
 
-(* Types pour représenter WHILEb-- *)
+
 type variable = A | B | C | D
 
 type expression =
