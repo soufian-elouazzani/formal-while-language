@@ -182,19 +182,19 @@ Definition Pcarre_inf := While Btrue corps_carre.
 Lemma SOS_Pcarre_2_1er_tour : SOS (Inter Pcarre_2 [0;0;1]) (Inter Pcarre_2 [1; 1; 3]).
 Proof.
   eapply SOS_again.
-  { apply SOS1_While. }
-  {
-    eapply SOS_again.
-    +Compute (evalB(Bnot(Beqnat Ir (Aco 2))) [0; 0; 1]). apply SOS1_If_true. cbn. reflexivity.
-    +eapply SOS_again.
-    -eapply SOS1_Seqi. unfold corps_carre.  eapply SOS1_Seqf. unfold incrI. apply SOS1_Assign.
+  - apply SOS1_While.
+  - eapply SOS_again.
+    
+    + apply SOS1_If_true. cbn. reflexivity.
+    + eapply SOS_again.
       
-    - eapply SOS_again.
-      -- eapply SOS1_Seqi. cbn. unfold incrX. eapply SOS1_Seqf. apply SOS1_Assign.
-      -- eapply SOS_again.
-         --- unfold incrY. eapply SOS1_Seqf. cbn. apply SOS1_Assign.
-         ---cbn. apply SOS_stop.
-  }
+      * eapply SOS1_Seqi. unfold corps_carre. eapply SOS1_Seqf. unfold incrI. apply SOS1_Assign.
+      * eapply SOS_again.
+        
+        { eapply SOS1_Seqi. cbn. unfold incrX. eapply SOS1_Seqf. apply SOS1_Assign. }
+        { eapply SOS_again.
+          - unfold incrY. eapply SOS1_Seqf. cbn. apply SOS1_Assign.
+          - cbn. apply SOS_stop. }
 Qed.
 
 Theorem SOS_Pcarre_inf_1er_tour : SOS (Inter Pcarre_inf [0;0;1]) (Inter Pcarre_inf [1; 1; 3]).
