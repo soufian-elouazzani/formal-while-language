@@ -127,7 +127,7 @@ let rec tokenize chars =
 let tokenize_string s =
   tokenize (List.init (String.length s) (String.get s))
 
-(* Chainer lexicale → syntaxe *)
+(* Chainer lexicale -> syntaxe *)
 
 let parse_from_string s =
   let toks = tokenize_string s in

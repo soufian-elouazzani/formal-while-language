@@ -142,5 +142,5 @@ let prog3 = Seq(
   )
 )
 
-let final_state_simple = execute_with_count prog3
-let () = assert (ListState.get 0 final_state_simple = 0) (*verify x=0*)
+let final_state = execute_with_count prog3
+let () = assert (ListState.get 0 final_state = 0) (*verify x=0*)

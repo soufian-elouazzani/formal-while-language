@@ -122,7 +122,6 @@ let debug (prog : programme) : ListState.t =
 
     let _ = read_line() in
 
-    (*we just execute the program like the last question*)
     match faire_un_pas p s with
     | Final s_final ->
         print_endline "--- FINISHED ---";

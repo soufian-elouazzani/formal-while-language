@@ -103,8 +103,8 @@ let e2 = Amu (Aco 6, Aco 7)
 let () = assert (evalA e2 s0 = 42)
 
 (* (2 + 3) * 4 = 20 *)
-let e5 = Amu (Apl (Aco 2, Aco 3), Aco 4)
-let () = assert (evalA e5 s0 = 20)
+let e3 = Amu (Apl (Aco 2, Aco 3), Aco 4)
+let () = assert (evalA e3 s0 = 20)
 
 
 

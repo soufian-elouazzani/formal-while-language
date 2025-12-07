@@ -103,7 +103,7 @@ let execute (prog : programme) : ListState.t =
   loop prog ListState.init
 
 (*
---- TESTING ASSIGN AND SEQ ---
+     TESTING ASSIGN AND SEQ 
 Program:
    variables -> [x; y]
    1. x := 10
@@ -157,8 +157,8 @@ Program:
 let prog_loop = Seq(
   Assign(0, Aco 0),                   (* Var[0] := 0 *)
   While(
-    Bnot(Beqnat(Ava 0, Aco 3)),       (* Condition: NOT (i == 3) *)
-    Assign(0, Apl(Ava 0, Aco 1))      (* Body: i := i + 1 *)
+    Bnot(Beqnat(Ava 0, Aco 3)),       (* NOT (i == 3) *)
+    Assign(0, Apl(Ava 0, Aco 1))      (* i  := i + 1 *)
   )
 )
 
