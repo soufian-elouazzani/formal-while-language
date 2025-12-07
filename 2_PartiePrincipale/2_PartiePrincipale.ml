@@ -397,7 +397,7 @@ let debug_parse_and_print s =
   with
   | Echec -> Printf.printf "INPUT: %s\nParse failed (Echec)\n" s
 
-(* run the debug for your failing example *)
+(* run the debug for a failing example *)
 let () = debug_parse_and_print "a:=a+!b.1+(c.d)"
 
 

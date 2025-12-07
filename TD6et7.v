@@ -413,40 +413,23 @@ Check Nat.sub_0_r.
 
 Theorem reduction2 : forall x y, SN P1 [x;y] [0;x+y].
 Proof.
-  cbv[P1 Ir Il N1 Xr Xl]; intros x.
-  induction x as [ | x Hrec_x];
-    intros; cbn [evalA];cbn [evalB].
-  {cbv [corps_boucle].
-   Compute (evalB(Bnot(Beqnat (Ava 0) N0)) [0; y]).
-   eapply SN_While_false.
+ cbv[P1 Ir Il N1 Xr Xl]; intros x.
+ induction x as [ | x Hrec_x];
+   intros; cbn [evalA];cbn [evalB].
+ {cbv [corps_boucle].
+  Compute (evalB(Bnot(Beqnat (Ava 0) N0)) [0; y]).
+  eapply SN_While_false.
+  +cbn. reflexivity.
+ }
+ {
+   cbv [corps_boucle].
+   Compute (evalB(Bnot(Beqnat(Ava 0) N0)) [S x; y]).
+   eapply SN_While_true.
    +cbn. reflexivity.
-  }
-  {
-    cbv [corps_boucle].
-    Compute (evalB(Bnot(Beqnat(Ava 0) N0)) [S x; y]).
-    eapply SN_While_true.
-    +cbn. reflexivity.
-    +eapply SN_Seq. apply SN_Assign. cbn. rewrite Nat.sub_0_r. apply SN_Assign.
-    + cbn. rewrite plus_n_Sm.
-      Compute (evalB(Bnot(Beqnat(Ava 0) N0)) [x; S y]).
-      apply Hrec_x.
-      (*
-      eapply SN_While_true. cbn.
-      Compute (negb(eqnatb x 0))
-      ERRO !!
-      Ao invés de aplicar a hipótese eu tentei rodar o while dnv (falta de atenção)
-
-forall y : nat, SN (While (Bnot (Beqnat (Ava 0) N0)) corps_boucle) [x; y] [0; x + y]
-
-  SN
-    (While (Bnot (Beqnat (Ava 0) N0))
-       (Seq (Assign Il (Amo Ir N1)) (Assign Xl (Apl N1 Xr))))
-    [x; S y] [0; x + S y]
-
----> VISUALIZAR final:
-     [x; y] [0; x + y] //// [x; S y] [0; x + S y]
-       *)
-
+   +eapply SN_Seq. apply SN_Assign. cbn. rewrite Nat.sub_0_r. apply SN_Assign.
+   + cbn. rewrite plus_n_Sm.
+     Compute (evalB(Bnot(Beqnat(Ava 0) N0)) [x; S y]).
+     apply Hrec_x.
   }
 Qed.
 
@@ -500,19 +483,6 @@ Proof.
   }
 Qed.
 
-(** Énoncer et démontrer que Pcarre n permet de calculer le carré de n *)
-
-(*FAZER EM CASA PARA ENTREGA*)
-(* Complétez ici NIVEAU 4
-   (pas de technique nouvelle, mais demande de la créativité *)
-
-(** Sur le même modèle, trouver un programme Pcube n'utilisant que des
-    additions, énoncer et démontrer qu'il est correct. *)
-(* Complétez ici NIVEAU 6
-   (pas de technique nouvelle, mais demande de la créativité
-  Quelques lemmes utiles.
- *)
-
 Check Nat.add_comm.
 Check Nat.add_assoc.
 Fail Check plus_assoc.
@@ -532,12 +502,10 @@ Fixpoint simpl_test_Btrue_Bfalse (i: winstr) : winstr :=
                      (simpl_test_Btrue_Bfalse w2)
   | If Btrue i1 i2 => simpl_test_Btrue_Bfalse i1
   | If Bfalse i1 i2 => simpl_test_Btrue_Bfalse i2
-                                                (*generalização do if com outros bools*)
+
   | If be i1 i2 => If be (simpl_test_Btrue_Bfalse i1) (simpl_test_Btrue_Bfalse i2)
   | While be i1 =>  While be (simpl_test_Btrue_Bfalse i1)
-  (*if be then while else skip // check be each iteraction // testa while be(predicado) e chama recursivamente a instrução
-w true -> func i1 -> w true ->ok*)
-    (* complétez ici NIVEAU 1 *)
+
   end.
 
 (** Comme indiqué ci-dessus on va procéder par récurrence structurelle sur
@@ -586,30 +554,7 @@ Proof.
   {
     destruct cond; try ( apply SN_If_true; [apply e | apply hrec_sn] )
     +apply hrec_sn.
-    +cbn in e. discriminate. (*!! -> perdi um tempo aqui*)
-  (*
-(*CASO MANUAL*)
-
-    +apply SN_If_true.
-    -apply e.
-    -apply hrec_sn.
-     
-     +apply SN_If_true.
-    -apply e.
-    -apply hrec_sn.
-     
-     +apply SN_If_true.
-    -apply e.
-    -apply hrec_sn.
-
-     +apply SN_If_true.
-    -apply e.
-    -apply hrec_sn.
-
-     +apply SN_If_true.
-    -apply e.
-    -apply hrec_sn.
-     *)
+    +cbn in e. discriminate. 
   }
 
   {
@@ -617,29 +562,6 @@ Proof.
     +cbn in e. discriminate.
 
     +apply hrec_sn.
-  (*
-    (*CASO MANUAL*)
-
-    +apply SN_If_false.
-    -apply e.
-    -apply hrec_sn.
-
-     +apply SN_If_false.
-    -apply e.
-    -apply hrec_sn.
-
-     +apply SN_If_false.
-    -apply e.
-    -apply hrec_sn.
-    
-     +apply SN_If_false.
-    -apply e.
-    -apply hrec_sn.
-
-     +apply SN_If_false.
-    -apply e.
-    -apply hrec_sn.]
-     *)
   }
 
   {
@@ -650,14 +572,11 @@ Proof.
     +apply e.
     +apply hrec_sn1.
     +apply hrec_sn2.
-  }
-    
-(** complétez ici
+  }  
+(* complétez ici
      - nombreux sous-buts NIVEAU 2
  
      - quelques sous-buts NIVEAU 3, utiliser admit si besoin
-     AQUI QUER DIZER QUE -> ALGUNS OBJETIVOS SÃO NIVEAU2 E OUTROS NIVEAU3.
-viajei legal
  *)
 Qed.
 
@@ -667,18 +586,13 @@ Qed.
 
 Fixpoint simpl_test_echange (i: winstr) : winstr := 
   (** complétez ici NIVEAU 1 *)
-  (*usar a base do outro simpl_test e mudar os if's ?*)
-  (*-> if bnot = checo de novo um IF de forma que eu faça um swap das instruções
-    -> if normal = mantenho a recursão pq eu posso ter um IF dentro de um IF e caso não tenha outro IF, ele excecuta seguindo a condição BE as instruções que vão sair de "simpl_test_echange i1/i2"
-    OK!
-   *)
   match i with
   | Skip => Skip
   | Assign v a => i
   | Seq w1 w2 => Seq (simpl_test_echange w1)
                      (simpl_test_echange w2)
   | If (Bnot be) i1 i2 => If be (simpl_test_echange i2) (simpl_test_echange i1)
-  | If be i1 i2 => If be (simpl_test_echange i1) (simpl_test_echange i2) (*!rec pq eu posso ter IF dentro de IF*)
+  | If be i1 i2 => If be (simpl_test_echange i1) (simpl_test_echange i2) 
   | While be i1 =>  While be (simpl_test_echange i1)
   end.
 
@@ -705,13 +619,6 @@ Theorem simpl_test_echange_correct :
   forall i s s', SN i s s' -> SN (simpl_test_echange i) s s'.
 Proof.
   intros i s s' sn.
-  (*
-NÃO POSSO USAR INDUCTION EM "i" POIS ELE NÃO CHECA INSTRUÇÕES EM SEQUENCIA (ex: while) SÓ CHEGA UMA INSTRUÇÃO DIRETAMENTE
-  induction i.
-  -apply SN_Skip.
-  XX
-   *)
-  
   induction sn.
   {apply SN_Skip.}
   {cbn. apply SN_Assign.}
@@ -725,13 +632,13 @@ NÃO POSSO USAR INDUCTION EM "i" POIS ELE NÃO CHECA INSTRUÇÕES EM SEQUENCIA (
 
     +cbn in H.
      apply SN_If_false.
-   -apply Bnot_negb in H. cbn in H.  apply H. (*!! manip das variaveis*)
+   -apply Bnot_negb in H. cbn in H.  apply H. 
    -apply IHsn.
   }
   {
     cbn.
     destruct b ; try (apply SN_If_false; [apply H | apply IHsn]).
-    +cbn in H. apply Bnot_negb in H. cbn in H. apply SN_If_true. (*mesma manip*)
+    +cbn in H. apply Bnot_negb in H. cbn in H. apply SN_If_true. 
     -apply H.
     -apply IHsn.
   }
@@ -741,8 +648,8 @@ NÃO POSSO USAR INDUCTION EM "i" POIS ELE NÃO CHECA INSTRUÇÕES EM SEQUENCIA (
   {
     eapply SN_While_true.
     -apply H.
-    -apply IHsn1. (*!Primeira iteraçao do while s -> s1*)
-    -apply IHsn2. (*!Segunda it do while s1 -> s2*)
+    -apply IHsn1. 
+    -apply IHsn2.
    }
   (** complétez ici
      - nombreux sous-buts NIVEAU 2
@@ -956,7 +863,7 @@ Inductive rinstr :=
 
 (** Définir la sémantique naturelle du langage REPEAT *)
 
-Inductive SNr: rinstr -> state -> state -> Prop := (*PAREI AQUI 26-NOVEMBRO*)
+Inductive SNr: rinstr -> state -> state -> Prop := 
 | SNr_Skip        : forall s,
                     SNr RSkip s s
 | SNr_Assign      : forall x e s,
@@ -982,7 +889,7 @@ Definition P2 := Repeat corps_boucleR (Beqnat Ir N0).
 Lemma P2_test : SNr P2 [2; 5] [0; 7].
 Proof.
   unfold P2. unfold corps_boucleR.
-  Compute (evalB(Beqnat Ir N0) [1;6]). (*WE NEED TO CHECK THE NEXT STATE (s1 instead of s)?? *)
+  Compute (evalB(Beqnat Ir N0) [1;6]).
   eapply SNr_Repeat_false.
   {
     eapply SNr_Seq.
@@ -1007,6 +914,32 @@ Qed.
 
 (** À FAIRE : présenter P2_test sous forme d'arbre *)
 Definition AFAIRE_dessin_P2_test : unit.
+(*
+
+
+
+
+
+
+
+                                                                          i = i-1 -> 1-1=0                  x=x+1 -> 6+1=7
+                                                                         ------------------SNr_Assign      --------------- SNr_Assign
+                                                                               SNr i1 [1;6] s'               SNr i2 s' [0;7]
+i = i-1 -> 2 - 1 = 1           x = x + 1 -> 5 + 1 = 6                                                         s'=[0;6]
+----------------- SNr_Assign    -------------------SNr_Assign                  -----------------------------------SNr_Seq
+SNr i1 [2;5] s'                   SNr i2 s' [0;7]                                       SNr_Corps[1;6][0;7]                       evalB (i=0) [0;7] = true
+                                   s' = [1;5]                                   -------------------------------------------------------------------------- SNr_Repeat_true                
+------------------------------------------SNr_Seq                                       SNr P2 [1;6][0;7]        
+        SNr_Corps [2;5][0;7]                          evalB (i=0) [1;6] = false
+------------------------------------------------------------------------------------------------------------------SNr_Repeat_false
+                                                   SNr P2 [2;5] [0;7]
+
+ *)
+
+
+
+
+  
 Admitted.
 
 
@@ -1085,7 +1018,7 @@ Proof.
     +apply SN_While_false.
      -cbn. rewrite H. apply negb_negb.
   }
-  { (*took a lot of time here -> very different way to prove (try to understand better inv_Seq)*)
+  { 
     cbn. eapply SN_Seq.
     +apply IHsn1.
      
@@ -1108,7 +1041,7 @@ Fixpoint while_repeat (i:winstr) : rinstr :=
     | Assign v a  => RAssign v a
     | Seq i1 i2   => RSeq (while_repeat i1) (while_repeat i2)
     | If b i1 i2  => RIf b (while_repeat i1) (while_repeat i2)
-    | While b i1  => RIf b (Repeat (while_repeat i1) (Bnot b)) RSkip (*i forgot the SKIP*)
+    | While b i1  => RIf b (Repeat (while_repeat i1) (Bnot b)) RSkip
       (* complétez ici NIVEAU 3 *)                                        
 end.    
 
@@ -1181,4 +1114,3 @@ Qed.
 (** Remarque : on pourrait également considérer un langage WHILE_REPEAT
     comprenant à la fois l'instruction While et l'instruction Repeat
  *)
-
