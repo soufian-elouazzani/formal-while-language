@@ -1,15 +1,12 @@
 #use "anacomb.ml";;
 
-
+(* Exercice 2.1.1 *)
 type variable = A | B | C | D
 
 type expression =
   | Zero
   | One 
   | Var of variable
-  | Not of expression
-  | And of expression * expression
-  | Or  of expression * expression
 
 type instruction =
   | Skip
@@ -20,100 +17,29 @@ type instruction =
 
 type programme = instruction
 
-(* on consume les espaces avant chaque charactere on utilisant skip_blanks *)
-
-(* Consume any number of spaces, tabs, or newlines *)
-let rec skip_blanks lst =
-  match lst with
-  | (' ' | '\t' | '\n' | '\r') :: q -> skip_blanks q
-  | _ -> lst
-
-(* Same parser combinator as terminal *)
-let token c =
-  fun lst ->
-    match skip_blanks lst with
-    | x :: q when x = c -> ([c], q)
-    | _ -> raise Echec
-
-(* aussi pour terminal_res *)
-let token_res f =
-  fun lst ->
-    match skip_blanks lst with
-    | x :: q ->
-        (match f x with
-         | Some v -> (v, q)
-         | None -> raise Echec)
-    | _ -> raise Echec
 
 (* Analyseur pour les variables *)
 let analyse_variable = 
-  token_res (function 
+  terminal_res (function 
     | 'a' -> Some A
     | 'b' -> Some B 
     | 'c' -> Some C
     | 'd' -> Some D
     | _ -> None)
-(* pour la langage whileb--
+
 (* Analyseur pour les expressions *)
 let analyse_expression =
   (terminal '0' -+> epsilon_res Zero)
   +| (terminal '1' -+> epsilon_res One) 
   +| (analyse_variable ++> fun v -> epsilon_res (Var v))
 
-*)
-
-(* pour la langage whileb *)
-
-let rec analyse_F lst =
-  (
-    (* '!' F *)
-    (terminal '!' -+> analyse_F ++> fun e -> epsilon_res (Not e))
-
-    +|
-    (* '(' E ')' *)
-    (terminal '(' -+> analyse_E ++> fun e ->
-       terminal ')' -+> epsilon_res e)
-
-    +|
-    (* variables ou constantes *)
-    analyse_atom
-  ) lst
-
-and analyse_atom lst =
-  (
-    (terminal '0' -+> epsilon_res Zero)
-    +|
-    (terminal '1' -+> epsilon_res One)
-    +|
-    (analyse_variable ++> fun v -> epsilon_res (Var v))
-  ) lst
-
-and analyse_T lst =
-  (
-    analyse_F ++> fun f1 ->
-    star_list (terminal '.' -+> analyse_F) ++> fun rest ->
-      let e =
-        List.fold_left (fun acc f -> And(acc,f)) f1 rest
-      in
-      epsilon_res e
-  ) lst
-
-and analyse_E lst =
-  (
-    analyse_T ++> fun t1 ->
-    star_list (terminal '+' -+> analyse_T) ++> fun rest ->
-      let e =
-        List.fold_left (fun acc t -> Or(acc,t)) t1 rest
-      in
-      epsilon_res e
-  ) lst
-
 (* ANALYSEUR AFFECTATION *)
 let analyse_affectation =
   analyse_variable ++> fun var ->
   (terminal ':' --> terminal '=') -+>  (* consume ":=" *)
-  analyse_E ++> fun expr ->
+  analyse_expression ++> fun expr ->
     epsilon_res (Affectation(var, expr))
+
 
 (* IF *)
 let analyse_if = 
@@ -188,8 +114,9 @@ let analyser_chaine chaine =
   try
     let chars = list_of_string chaine in
     let resultat, reste = analyser_programme chars in
-    Some resultat
+    if reste = [] then Some resultat else None
   with Echec -> None
+
 
 
 (* Exercice 2.1.2 *)
@@ -242,14 +169,7 @@ let () =
          Affectation(C,Zero)
     ))
 
-let () =
-  test "a:=a+!b.1+(c.d)"
-    (Affectation(A,
-       Or(
-         Or(Var A, And(Not(Var B), One)),
-         And(Var C, Var D)
-       )
-    ))
+
 
 
 
@@ -273,30 +193,12 @@ let rec update_at i v = fun l ->
 let update v n st =
   update_at (var_index v) n st
 
-(* old while eval 
+
 let eval_expr e st =
   match e with
   | Zero -> 0
   | One -> 1
   | Var v -> lookup v st
-*)
-
-let rec eval_expr e st =
-  match e with
-  | Zero -> 0
-  | One -> 1
-  | Var v -> lookup v st
-
-  | Not e1 ->
-      if eval_expr e1 st = 1 then 0 else 1
-
-  | And (e1, e2) ->
-      if eval_expr e1 st = 1 && eval_expr e2 st = 1
-      then 1 else 0
-
-  | Or (e1, e2) ->
-      if eval_expr e1 st = 1 || eval_expr e2 st = 1
-      then 1 else 0
 
 (* SEMANTIQUE NATURELLE  *)
 
@@ -346,67 +248,3 @@ let () =
 
 let () =
   run "w(a){i(b){c:=0;a:=0}{c:=1;a:=0}}" [1;0;0;0]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(* DEBUGER printer *)
-let string_of_var = function A -> "A" | B -> "B" | C -> "C" | D -> "D"
-
-let rec string_of_expr = function
-  | Zero -> "Zero"
-  | One  -> "One"
-  | Var v -> "Var(" ^ string_of_var v ^ ")"
-  | Not e -> "Not(" ^ string_of_expr e ^ ")"
-  | And (e1,e2) -> "And(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ ")"
-  | Or  (e1,e2) -> "Or("  ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ ")"
-
-let rec string_of_instr = function
-  | Skip -> "Skip"
-  | Affectation(v,e) ->
-      "Affectation(" ^ string_of_var v ^ ", " ^ string_of_expr e ^ ")"
-  | Sequence(i1,i2) ->
-      "Sequence(" ^ string_of_instr i1 ^ ", " ^ string_of_instr i2 ^ ")"
-  | If(v,i1,i2) ->
-      "If(" ^ string_of_var v ^ ", " ^ string_of_instr i1 ^ ", " ^ string_of_instr i2 ^ ")"
-  | While(v,i) ->
-      "While(" ^ string_of_var v ^ ", " ^ string_of_instr i ^ ")"
-
-let string_of_charlist cl =
-  String.concat "" (List.map (String.make 1) cl)
-
-(* helper that prints analyser_programme result including leftover *)
-let debug_parse_and_print s =
-  let chars = list_of_string s in
-  try
-    let ast, rest = analyser_programme chars in
-    Printf.printf "INPUT: %s\n" s;
-    Printf.printf "PARSED AST: %s\n" (string_of_instr ast);
-    Printf.printf "REMAINDER (%d chars): \"%s\"\n"
-      (List.length rest) (string_of_charlist rest)
-  with
-  | Echec -> Printf.printf "INPUT: %s\nParse failed (Echec)\n" s
-
-(* run the debug for your failing example *)
-let () = debug_parse_and_print "a:=a+!b.1+(c.d)"
-
-
-
-
-
-
-
-
-
-
-
