@@ -1,47 +1,41 @@
-# formal-while-language
-
-📘 Projet WHILEb — Analyseur & Interpréteur en OCaml
+# 📘 Projet WHILEb — Analyseur & Interpréteur en OCaml
 
 Ce projet implémente :
-
-un analyseur syntaxique basé sur des combinateurs d’analyse (anacomb)
-
-un interpréteur basé sur la sémantique naturelle (SN)
-
-des extensions du langage WHILEb⁻⁻ au langage WHILEb (expressions booléennes complètes)
+- **un analyseur syntaxique** basé sur des combinateurs d'analyse (anacomb)
+- **un interpréteur** basé sur la sémantique naturelle (SN)
+- **des extensions** du langage WHILEb⁻⁻ au langage WHILEb (expressions booléennes complètes)
 
 Le projet est principalement constitué de trois fichiers :
+- `whileb--.ml` — Partie 1.1 et simplifiée du langage
+- `whileb.ml` — Analyseur complet (2.1.x) + exécution WHILEb (2.2.x)
+- `whileb_with_spaces.ml` — Version améliorée acceptant les espaces (1.1.4)
 
-whileb--.ml — Partie 1.1 et simplifiée du langage
+---
 
-whileb.ml — Analyseur complet (2.1.x) + exécution WHILEb (2.2.x)
+## 🔧 1. Combinateurs d'analyse (anacomb)
 
-whileb_with_spaces.ml — Version améliorée acceptant les espaces (1.1.4)
+Le projet utilise la bibliothèque légère `anacomb`, qui permet de construire des analyseurs syntaxiques en combinant de petits parseurs primitifs.
 
-🔧 1. Combinateurs d’analyse (anacomb)
+### **Combinateurs de base (sans résultat)**
 
-Le projet utilise la bibliothèque légère anacomb, qui permet de construire des analyseurs syntaxiques en combinant de petits parseurs primitifs.
+| Combinateur | Description |
+|------------|-------------|
+| `terminal c` | Analyse un caractère exactement égal à `c` |
+| `terminal_cond p` | Analyse un caractère vérifiant le prédicat `p` |
+| `epsilon` | Réussit toujours, ne consomme rien |
+| `a1 --> a2` | Séquence : exécute `a1` puis `a2` |
+| `a1 -| a2` | Alternative : essaie `a1`, sinon essaie `a2` |
+| `star a` | Répète `a` (0 ou plusieurs fois) |
 
-Combinateurs de base (sans résultat)
-Combinateur	Description
-terminal c	Analyse un caractère exactement égal à c
-terminal_cond p	Analyse un caractère vérifiant le prédicat p
-epsilon	Réussit toujours, ne consomme rien
-a1 --> a2	Séquence : exécute a1 puis a2 (analyseurs “sans résultat”)
-`a1 -	a2`
-star a	Répète a (0 ou plusieurs fois)
-Combinateurs avec résultat
-Combinateur	Description
-epsilon_res x	Retourne x sans consommer
-terminal_res f	Lit un caractère et applique f pour produire un résultat
-a1 -+> a2	Analyseur puis analyseur retournant un résultat
-a1 ++> f	Applique une fonction dépendant du résultat précédent
-`a1 +	a2`
+### **Combinateurs avec résultat**
 
-Exemples :
-
-terminal ':' -+> analyse_expression
-analyse_variable ++> fun v -> ...
+| Combinateur | Description |
+|------------|-------------|
+| `epsilon_res x` | Retourne `x` sans consommer |
+| `terminal_res f` | Lit un caractère et applique `f` pour produire un résultat |
+| `a1 -+> a2` | Analyseur sans résultat suivi d'un analyseur avec résultat |
+| `a1 ++> f` | Applique une fonction dépendant du résultat précédent |
+| `a1 +| a2` | Alternative entre analyseurs avec résultat |
 
 
 Ces outils permettent de construire un analyseur récursif descendant sans utiliser de parser generator.
@@ -87,14 +81,6 @@ e1 . e2 (conjonction, gauche)
 
 e1 + e2 (disjonction, gauche)
 
-Exemple :
-
-a+b.0+!1
-
-
-se lit comme :
-
-(a + (b.0)) + (!1)
 
 📄 4. whileb.ml — Partie principale
 
