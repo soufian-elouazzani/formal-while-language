@@ -60,7 +60,7 @@ let print_state st =
     (List.nth st 0) (List.nth st 1)
     (List.nth st 2) (List.nth st 3)
 
-
+let _ = analyser_chaine "a:=1"
     
 let run s =
   match analyser_chaine s with
