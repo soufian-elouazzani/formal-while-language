@@ -112,7 +112,7 @@ Ce fichier regroupe des preuves en Coq pour :
     .
     ├── 1_Préliminaires
     │   ├── 1_preliminaires.ml
-    │   └── 1-2-1-LT_PROJECT.txt
+    │   └── 1-2-1-ANSWERS.txt
     │
     ├── 2_PartiePrincipale
     │   ├── WHILEb--.ml
