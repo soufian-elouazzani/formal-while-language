@@ -1,132 +1,126 @@
-# 📘 Projet WHILEb — Analyseur & Interpréteur en OCaml
+# Projet WHILEb / WHILEb-- --- Analyseur & Sémantique
 
-Ce projet implémente :
-- **un analyseur syntaxique** basé sur des combinateurs d'analyse (anacomb)
-- **un interpréteur** basé sur la sémantique naturelle (SN)
-- **des extensions** du langage WHILEb⁻⁻ au langage WHILEb (expressions booléennes complètes)
+Ce projet est divisé en **trois grandes parties**, chacune située dans
+un dossier dédié :
 
-Le projet est principalement constitué de trois fichiers :
-- `whileb--.ml` — Partie 1.1 et simplifiée du langage
-- `whileb.ml` — Analyseur complet (2.1.x) + exécution WHILEb (2.2.x)
-- `whileb_with_spaces.ml` — Version améliorée acceptant les espaces (1.1.4)
+    1_Préliminaires
+    2_PartiePrincipale
+    3_ExtensionsOptionnelles
 
----
+------------------------------------------------------------------------
 
-## 🔧 1. Combinateurs d'analyse (anacomb)
+## 📌 1. Préliminaires théoriques --- `1_Préliminaires/`
 
-Le projet utilise la bibliothèque légère `anacomb`, qui permet de construire des analyseurs syntaxiques en combinant de petits parseurs primitifs.
+Ce dossier contient deux fichiers :
 
-### **Combinateurs de base (sans résultat)**
+### **1. `1_preliminaires.ml`**
 
-| Combinateur | Description |
-|------------|-------------|
-| `terminal c` | Analyse un caractère exactement égal à `c` |
-| `terminal_cond p` | Analyse un caractère vérifiant le prédicat `p` |
-| `epsilon` | Réussit toujours, ne consomme rien |
-| `a1 --> a2` | Séquence : exécute `a1` puis `a2` |
-| `a1 -| a2` | Alternative : essaie `a1`, sinon essaie `a2` |
-| `star a` | Répète `a` (0 ou plusieurs fois) |
+Contient les réponses aux exercices :
 
-### **Combinateurs avec résultat**
+-   **Exercice 1.1.2**
+-   **Exercice 1.1.3**
+-   **Exercice 1.1.4**
 
-| Combinateur | Description |
-|------------|-------------|
-| `epsilon_res x` | Retourne `x` sans consommer |
-| `terminal_res f` | Lit un caractère et applique `f` pour produire un résultat |
-| `a1 -+> a2` | Analyseur sans résultat suivi d'un analyseur avec résultat |
-| `a1 ++> f` | Applique une fonction dépendant du résultat précédent |
-| `a1 +| a2` | Alternative entre analyseurs avec résultat |
+Ce fichier présente notamment :
 
+-   la grammaire du langage **WHILEb--**
+-   la grammaire du langage **WHILEb**
+-   une version **sans récursion**
 
-Ces outils permettent de construire un analyseur récursif descendant sans utiliser de parser generator.
+------------------------------------------------------------------------
 
-🧩 2. Structure du projet
-📄 whileb--.ml
+### **2. `1-2-1-LT_PROJECT.txt`**
 
-Cette première partie correspond aux exercices :
+Contient les **règles de la sémantique naturelle (SN)**\
+pour les programmes de la forme :
 
-1.1.1 — Analyseur minimal WHILEb⁻⁻
+    if expr then P else Q
 
-1.1.2 — Ajout d’AST pour Affectation, Boucles, Séquences
+------------------------------------------------------------------------
 
-2.2.1 — Définition de l’état + exécution selon la sémantique naturelle
+## 📌 2. Partie principale --- `2_PartiePrincipale/`
 
-Langage accepté :
+Objectif :\
+**Implémentation de l'analyseur syntaxique et exécution de programmes
+WHILEb-- et WHILEb.**
 
-uniquement les variables a,b,c,d
+Ce dossier contient trois fichiers principaux :
 
-pas d’opérateurs booléens complets
+### **1. `WHILEb--.ml`**
 
-expressions limitées (constantes et variables)
+Répond aux exercices liés au langage **WHILEb--** :
 
-🧠 3. Extension vers le langage WHILEb
-📘 Grammaire officielle
+-   **Exercice 2.1.1**
+-   **Exercice 2.1.2**
+-   **Exercice 2.2.1**
 
-Le langage WHILEb étend les expressions avec :
+Ce fichier contient :
 
-C ::= '0' | '1'
-V ::= 'a' | 'b' | 'c' | 'd'
-A ::= C | V
+-   l'analyse syntaxique de WHILEb--\
+-   l'exécution selon la sémantique naturelle (SN)
 
-E ::= E '+' T | T
-T ::= T '.' F | F
-F ::= '!' F | A | '(' E ')'
+------------------------------------------------------------------------
 
+### **2. `WHILEb.ml`**
 
-Priorités :
+Répond aux exercices liés au langage **WHILEb** :
 
-!e
+-   **Exercice 2.1.3**
+-   **Exercice 2.2.2**
 
-e1 . e2 (conjonction, gauche)
+------------------------------------------------------------------------
 
-e1 + e2 (disjonction, gauche)
+### **3. (Fichier dédié à l'exercice 2.1.4)**
 
+Contient la solution à :
 
-📄 4. whileb.ml — Partie principale
+-   **Exercice 2.1.4** :\
+    *amélioration de l'analyseur pour ignorer les espaces blancs*
 
-Ce fichier couvre les exercices :
+------------------------------------------------------------------------
 
-2.1.3 — Analyseur étendu pour toute la grammaire WHILEb
+## 📌 3. Extensions optionnelles --- `3_ExtensionsOptionnelles/`
 
-gestion des priorités (+, ., !)
+Ce dossier contient plusieurs fichiers nommés selon le format :
 
-variables et constantes
+    numero-numero.ml
 
-parenthèses
+Ils correspondent aux exercices :
 
-2.2.2 — Exécution du langage complet WHILEb
+-   **Exercice 3.2** --- Analyse lexicale & syntaxique avancée\
+-   **Exercice 3.3** --- Listes paresseuses\
+-   **Exercice 3.4**\
+-   **Exercice 3.5**
 
-interprétation booléenne (0/1)
+------------------------------------------------------------------------
 
-gestion des nouveaux opérateurs (Not, And, Or)
+### **`TD6et7.v`**
 
-exécution SN sur l’AST complet
+Ce fichier regroupe des preuves en Coq pour :
 
-🧹 5. whileb_with_spaces.ml — Version tolérante aux blancs
+-   **Partie 2.3** --- Preuves sur la sémantique naturelle (SN)\
+-   **Partie 3.1** --- Preuves sur la sémantique opérationnelle
+    structurelle (SOS)
 
-Correspond à 1.1.4 (facultatif).
+------------------------------------------------------------------------
 
-Cette version ajoute :
+## ✔️ Structure du projet
 
-gestion des espaces, retours ligne, indentation
-
-combinateur space et star space
-
-adaptation des analyseurs existants pour ignorer les blancs
-
-▶️ 6. Exécution & Exemple
-
-Le programme final intègre :
-
-Analyse syntaxique (avec anacomb)
-
-Évaluation d’expression
-
-Exécution d’un programme WHILEb selon la sémantique naturelle
-
-Exemple :
-
-run "w(a){i(b){c:=0;a:=0}{c:=1;a:=0}}" [1;0;0;0]
-
-
-Affiche l’état final des variables a,b,c,d.
+    .
+    ├── 1_Préliminaires
+    │   ├── 1_preliminaires.ml
+    │   └── 1-2-1-LT_PROJECT.txt
+    │
+    ├── 2_PartiePrincipale
+    │   ├── WHILEb--.ml
+    │   ├── WHILEb.ml
+    │   └── (fichier exercice 2.1.4)
+    │
+    ├── 3_ExtensionsOptionnelles
+    │   ├── 3.2.ml
+    │   ├── 3.3.ml
+    │   ├── 3.4.ml
+    │   ├── 3.5.ml
+    │   └── TD6et7.v
+    │
+    └── README.md
