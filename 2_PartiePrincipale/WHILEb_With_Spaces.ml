@@ -1,8 +1,6 @@
 #use "anacomb.ml";;
 
 
-(* Exercice 2.1.3 *)
-
 type variable = A | B | C | D
 
 type expression =
@@ -22,14 +20,49 @@ type instruction =
 
 type programme = instruction
 
+(* on consume les espaces avant chaque charactere on utilisant skip_blanks *)
+
+(* Consume any number of spaces, tabs, or newlines *)
+let rec skip_blanks lst =
+  match lst with
+  | (' ' | '\t' | '\n' | '\r') :: q -> skip_blanks q
+  | _ -> lst
+
+(* Same parser combinator as terminal *)
+let token c =
+  fun lst ->
+    match skip_blanks lst with
+    | x :: q when x = c -> ([c], q)
+    | _ -> raise Echec
+
+(* aussi pour terminal_res *)
+let token_res f =
+  fun lst ->
+    match skip_blanks lst with
+    | x :: q ->
+        (match f x with
+         | Some v -> (v, q)
+         | None -> raise Echec)
+    | _ -> raise Echec
+
 (* Analyseur pour les variables *)
 let analyse_variable = 
-  terminal_res (function 
+  token_res (function 
     | 'a' -> Some A
     | 'b' -> Some B 
     | 'c' -> Some C
     | 'd' -> Some D
     | _ -> None)
+(* pour la langage whileb--
+(* Analyseur pour les expressions *)
+let analyse_expression =
+  (terminal '0' -+> epsilon_res Zero)
+  +| (terminal '1' -+> epsilon_res One) 
+  +| (analyse_variable ++> fun v -> epsilon_res (Var v))
+
+*)
+
+(* pour la langage whileb *)
 
 let rec analyse_F lst =
   (
@@ -172,7 +205,42 @@ let test p expected =
       print_endline ("FAIL (parse error): " ^ p)
 ;;
 
-(* ------- TEST PROGRAM ------- *)
+(* ------- TEST PROGRAMS ------- *)
+
+(* 1 — simple affectation *)
+let () =
+  test "a:=1"
+    (Affectation (A, One))
+
+(* 2 — sequence of affectations *)
+let () =
+  test "a:=1;b:=0"
+    (Sequence (Affectation(A,One), Affectation(B,Zero)))
+
+(* 3 — simple IF *)
+let () =
+  test "i(a){b:=1}{b:=0}"
+    (If (A, Affectation(B,One), Affectation(B,Zero)))
+
+(* 4 — simple WHILE *)
+let () =
+  test "w(a){b:=1}"
+    (While (A, Affectation(B,One)))
+
+(* 5 — nested IF in WHILE *)
+let () =
+  test "w(a){i(b){c:=1}{c:=0}}"
+    (While (A,
+       If (B, Affectation(C,One), Affectation(C,Zero))
+    ))
+
+(* 6 — nested WHILE in IF *)
+let () =
+  test "i(a){w(b){c:=1}}{c:=0}"
+    (If (A,
+         While (B, Affectation(C,One)),
+         Affectation(C,Zero)
+    ))
 
 let () =
   test "a:=a+!b.1+(c.d)"
@@ -248,7 +316,7 @@ let rec exec instr st =
 
 
 
-let initial_state = [1;1;0;0]   (* a=1, b=1, c=0, d=0 *)
+let initial_state = [1;1;0;0]   (* a=0, b=0, c=0, d=0 *)
 
 
 let print_state st =
