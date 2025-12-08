@@ -131,3 +131,11 @@ Ce fichier regroupe des preuves en Coq pour :
     │   └── TD6et7.v
     │
     └── README.md
+
+## Questions traitées:
+#### En commun: 
+- 1.1.1, 1.1.2, 1.1.3, 1.1.4
+#### Soufian ELOUAZZANI: 
+- 2.1, 2.2, 3.2, 3.3
+#### Luiz Eduardo AKAZAWA NORA: 
+- 1.2.1, 2.3, 3.1, 3.4, 3.5
