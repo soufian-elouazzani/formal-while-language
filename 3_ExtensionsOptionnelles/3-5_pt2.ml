@@ -102,11 +102,11 @@ let debug (prog : programme) : ListState.t =
     Printf.printf "\n[STEP %d] Current Instruction: " step;
     (match p with
      | Skip -> Printf.printf "Skip"
-     | Assign (id, _) -> Printf.printf "Assignment Var(%d)" id
+     | Assign (id, _) -> Printf.printf "Assignment Var[%d]" id
      | Seq (i1, _) ->                                         (*finally fixed the SEQ*)
         Printf.printf "Sequence [Executing: ";
         (match i1 with
-         | Assign (id, _) -> Printf.printf "Assign Var(%d)" id
+         | Assign (id, _) -> Printf.printf "Assign Var[%d]" id
          | Skip -> Printf.printf "Skip"
          | If _ -> Printf.printf "If"
          | While _ -> Printf.printf "While"
@@ -118,14 +118,14 @@ let debug (prog : programme) : ListState.t =
     );
     print_newline ();
 
-    Printf.printf "  State: Var(0)=%d | Var(1)=%d | Var(2)=%d\n" (ListState.get 0 s) (ListState.get 1 s) (ListState.get 2 s);
+    Printf.printf "  State: Var[0]=%d | Var[1]=%d | Var[2]=%d\n" (ListState.get 0 s) (ListState.get 1 s) (ListState.get 2 s);
 
     let _ = read_line() in
 
     match faire_un_pas p s with
     | Final s_final ->
         print_endline "--- FINISHED ---";
-        Printf.printf "  State: Var(0)=%d | Var(1)=%d | Var(2)=%d\n" (ListState.get 0 s_final) (ListState.get 1 s_final) (ListState.get 2 s_final);
+        Printf.printf "  State: Var[0]=%d | Var[1]=%d | Var[2]=%d\n" (ListState.get 0 s_final) (ListState.get 1 s_final) (ListState.get 2 s_final);
         s_final
         
     | Inter (next_p, next_s) ->

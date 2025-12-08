@@ -956,7 +956,7 @@ Admitted.
     remplaçant les Repeat par l'expression équivalente ci-dessus
  *)
 
-Fixpoint repeat_while (i:rinstr) : winstr := (*we need to do like a "casting" in each variable, change from rinstr to winstr to work: write better this comment!!*)
+Fixpoint repeat_while (i:rinstr) : winstr := 
     match i with
     | RSkip        => Skip
     | RAssign v a  => Assign v a
@@ -1502,7 +1502,7 @@ Admitted.
 Lemma SOS_corps_carre_inter n i :
   SOS (Inter (Seq corps_carre i) (invar_cc n)) (Inter i (invar_cc (S n))).
 Proof.
-  apply SOS_seqf. unfold corps_carre.
+  unfold corps_carre. apply SOS_seqf.
   eapply SOS_again.
   {unfold incrI. apply SOS1_Seqf. apply SOS1_Assign.}
   cbn. eapply SOS_again.
