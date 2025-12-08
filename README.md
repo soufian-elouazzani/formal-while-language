@@ -89,8 +89,11 @@ Ils correspondent aux exercices :
 
 -   **Exercice 3.2** --- Analyse lexicale & syntaxique avancée\
 -   **Exercice 3.3** --- Listes paresseuses\
--   **Exercice 3.4**\
--   **Exercice 3.5**
+-   **Exercice 3.4.1** --- Gestion de la mémoire\
+-   **Exercice 3.4.2** --- Traduction type config\
+-   **Exercice 3.4.3** --- Fonction executer\
+-   **Exercice 3.5_pt1** --- Compteur de pas\
+-   **Exercice 3.5_pt2** --- Mode interactif pas à pas
 
 ------------------------------------------------------------------------
 
@@ -100,7 +103,7 @@ Ce fichier regroupe des preuves en Coq pour :
 
 -   **Partie 2.3** --- Preuves sur la sémantique naturelle (SN)\
 -   **Partie 3.1** --- Preuves sur la sémantique opérationnelle
-    structurelle (SOS)
+    structurelle (SOS) (les responses en français dans le fichier 3.1-ANSWERS.txt)
 
 ------------------------------------------------------------------------
 
@@ -114,13 +117,17 @@ Ce fichier regroupe des preuves en Coq pour :
     ├── 2_PartiePrincipale
     │   ├── WHILEb--.ml
     │   ├── WHILEb.ml
-    │   └── (fichier exercice 2.1.4)
+    │   └── WHILEb_With_Spaces.ml
     │
     ├── 3_ExtensionsOptionnelles
-    │   ├── 3.2.ml
-    │   ├── 3.3.ml
-    │   ├── 3.4.ml
-    │   ├── 3.5.ml
+    │   ├── 3.1-ANSWERS.txt
+    │   ├── 3-2.ml
+    │   ├── 3-3.ml
+    │   ├── 3-4-1.ml
+    │   ├── 3-4-2.ml
+    │   ├── 3-4-3.ml
+    │   ├── 3.5_pt1.ml
+    │   ├── 3.5_pt2.ml
     │   └── TD6et7.v
     │
     └── README.md
