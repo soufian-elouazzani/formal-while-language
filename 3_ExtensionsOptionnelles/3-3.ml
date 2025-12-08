@@ -1,3 +1,5 @@
+#use "3-2.ml"
+
 (* Exercise 3.3 *)
 
 (* Utilities - lazy list type *)
@@ -133,3 +135,61 @@ let rec star_pipe_L2R (a : ('r -> 'r, 'term) ranalist) : ('r -> 'r, 'term) ranal
 
 let star_L2R (r0 : 'r) (a : ('r -> 'r, 'term) ranalist) : ('r, 'term) ranalist =
   star_pipe_L2R a ++> fun f -> epsilon_res (r0 |> f)
+
+
+
+
+
+
+(* -------------------- *)
+(*        TESTS         *)
+(* -------------------- *)
+
+let print_expr e =
+  let rec aux = function
+    | EInt n -> Printf.sprintf "Int(%d)" n
+    | EVar s -> Printf.sprintf "Var(%s)" s
+    | Plus(a,b)  -> Printf.sprintf "Plus(%s,%s)" (aux a) (aux b)
+    | Minus(a,b) -> Printf.sprintf "Minus(%s,%s)" (aux a) (aux b)
+    | Times(a,b) -> Printf.sprintf "Times(%s,%s)" (aux a) (aux b)
+    | Div(a,b)   -> Printf.sprintf "Div(%s,%s)"   (aux a) (aux b)
+    | And(a,b)   -> Printf.sprintf "And(%s,%s)"   (aux a) (aux b)
+    | Or(a,b)    -> Printf.sprintf "Or(%s,%s)"    (aux a) (aux b)
+    | Not e      -> Printf.sprintf "Not(%s)"      (aux e)
+    | Eq(a,b)    -> Printf.sprintf "Eq(%s,%s)"    (aux a) (aux b)
+    | Lt(a,b)    -> Printf.sprintf "Lt(%s,%s)"    (aux a) (aux b)
+    | Le(a,b)    -> Printf.sprintf "Le(%s,%s)"    (aux a) (aux b)
+    | Gt(a,b)    -> Printf.sprintf "Gt(%s,%s)"    (aux a) (aux b)
+    | Ge(a,b)    -> Printf.sprintf "Ge(%s,%s)"    (aux a) (aux b)
+  in
+  print_endline (aux e)
+
+
+let run_test s =
+  Printf.printf "\nTEST: %s\n" s;
+  try
+    let ast = parser_program s in
+    print_expr ast
+  with _ ->
+    print_endline "!! PARSE ERROR !!"
+
+
+let () =
+  print_endline "\n===================";
+  print_endline "  RUNNING TESTS";
+  print_endline "===================";
+
+  (* Arithmetic *)
+  run_test "1+2";
+  run_test "1+2*3";
+  run_test "(1+2)*3";
+
+
+  (* Mix *)
+  run_test "1+2==3";
+  run_test "1<2 && 3<4";
+  run_test "!false";
+  run_test "x + 3 * y";
+
+
+  print_endline "\nDone.\n";

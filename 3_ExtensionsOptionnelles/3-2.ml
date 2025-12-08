@@ -236,3 +236,64 @@ let parser_program s =
   match rest with
   | [EOF] | [] -> ast
   | _ -> failwith "Syntax error after expression"
+
+
+(* --------------- *)
+(* TESTS           *)
+(* --------------- *)
+
+let rec show_expr e =
+  match e with
+  | EInt n -> string_of_int n
+  | EVar s -> s
+  | Plus (a,b) -> "(" ^ show_expr a ^ " + " ^ show_expr b ^ ")"
+  | Minus (a,b) -> "(" ^ show_expr a ^ " - " ^ show_expr b ^ ")"
+  | Times (a,b) -> "(" ^ show_expr a ^ " * " ^ show_expr b ^ ")"
+  | Div (a,b) -> "(" ^ show_expr a ^ " / " ^ show_expr b ^ ")"
+  | Eq (a,b) -> "(" ^ show_expr a ^ " = " ^ show_expr b ^ ")"
+  | Lt (a,b) -> "(" ^ show_expr a ^ " < " ^ show_expr b ^ ")"
+  | Le (a,b) -> "(" ^ show_expr a ^ " <= " ^ show_expr b ^ ")"
+  | Gt (a,b) -> "(" ^ show_expr a ^ " > " ^ show_expr b ^ ")"
+  | Ge (a,b) -> "(" ^ show_expr a ^ " >= " ^ show_expr b ^ ")"
+  | And (a,b) -> "(" ^ show_expr a ^ " and " ^ show_expr b ^ ")"
+  | Or  (a,b) -> "(" ^ show_expr a ^ " or " ^ show_expr b ^ ")"
+  | Not e -> "(not " ^ show_expr e ^ ")"
+
+module Ast = struct
+  let show = show_expr
+end
+
+
+let run_test name input =
+  try
+    let ast = parser_program input in
+    Printf.printf "Test: %s\nInput: %s\n-> OK\nAST: %s\n\n"
+      name input (Ast.show ast)
+  with
+  | Failure msg ->
+      Printf.printf "Test: %s\nInput: %s\n-> ERROR: %s\n\n"
+        name input msg
+  | e ->
+      Printf.printf "Test: %s\nInput: %s\n-> EXCEPTION: %s\n\n"
+        name input (Printexc.to_string e)
+
+let () =
+  Printf.printf "==================== RUNNING TESTS ====================\n";
+
+  (* simple tests *)
+  run_test "integer" "42";
+  run_test "variable" "x";
+  run_test "addition" "1 + 2";
+  run_test "precedence" "1 + 2 * 3";
+  run_test "parentheses" "(1 + 2) * 3";
+
+  (* boolean ops *)
+  run_test "and/or" "a and b or c";
+
+  (* comparisons *)
+  run_test "comparisons" "x < 10";
+
+
+  Printf.printf "====================== DONE TESTS ======================\n";
+
+
