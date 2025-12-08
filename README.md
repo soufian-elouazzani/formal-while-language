@@ -70,7 +70,7 @@ Répond aux exercices liés au langage **WHILEb** :
 
 ------------------------------------------------------------------------
 
-### **3. (Fichier dédié à l'exercice 2.1.4)**
+### **3. `WHILEb_With_Spaces.ml`**
 
 Contient la solution à :
 
